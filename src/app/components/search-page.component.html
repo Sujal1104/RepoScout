@@ -1,0 +1,61 @@
+<div class="container mx-auto">
+  <!-- Search bar -->
+  <div class="p-4 bg-gray-100 rounded-md shadow-md text-center">
+    <input type="text" [(ngModel)]="username" placeholder="Enter GitHub username" class="p-2 border border-gray-300 rounded-md">
+    <button (click)="searchUser()" class="ml-2 px-4 py-2 bg-green-200 text-gray-700  rounded-md hover:bg-green-400">Search</button>
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="loading" class="grid grid-cols-2 gap-2 mt-5 ml-5">
+    <img src="../../assets/loader.gif" alt="Loading..." class="w-18 h-18">
+    <img src="../../assets/loader.gif" alt="Loading..." class="w-18 h-18">
+    <img src="../../assets/loader.gif" alt="Loading..." class="w-18 h-18">
+    <img src="../../assets/loader.gif" alt="Loading..." class="w-18 h-18">
+  </div>
+  
+  
+
+  <!-- Error message -->
+  <div *ngIf="error" class="mt-4 text-red-600 text-center">{{ error }}</div>
+
+  <!-- User profile -->
+  <div *ngIf="userProfile.login" class="mt-4 flex items-center justify-center">
+    <img [src]="userProfile.avatar_url" alt="Profile Image" width="100" class="rounded-full mr-4">
+    <div>
+      <a [href]="userProfile.html_url" target="_blank" class="text-cyan-900 hover:underline">{{ userProfile.login }}</a>
+      <!-- Add additional details here -->
+    </div>
+  </div>
+
+  <!-- Repository list -->
+  <div *ngIf="repositories.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
+    <h2 class="text-lg font-semibold">Repositories:</h2>
+    
+    <!-- Page size dropdown -->
+    <div class="flex items-center mt-2">
+      <label for="pageSize" class="mr-2">Max repo:</label>
+      <select id="pageSize" [(ngModel)]="pageSize" (change)="changePageSize()" class="py-2 px-3 border rounded-md">
+        <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+
+    <div *ngFor="let repo of repositories" class="bg-gray-100 p-5 rounded-md shadow-md mx-4 ml-10 max-w-2xl">
+      <a [href]="repo.html_url" target="_blank" class="text-cyan-900 hover:underline block">{{ repo.name }}</a>
+      <div *ngIf="repo.languages" class="mt-2">
+        <div class="flex flex-wrap">
+          <span *ngFor="let lang of getLanguageKeys(repo.languages)" class="bg-blue-200 text-blue-800 px-3 py-1 mr-2 mb-2 rounded">{{ lang }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No repositories found message -->
+  <div *ngIf="repositories.length === 0 && !loading && !error" class="mt-4 text-gray-600 text-center">No repositories found.</div>
+
+  <!-- Centered buttons -->
+<div *ngIf="repositories.length > 0" class="flex justify-center mt-4">
+  <button (click)="prevPage()" [disabled]="currentPage === 1" class="px-4 py-2 bg-green-200 text-gray-500 rounded-md hover:bg-green-400 mr-2">Previous</button>
+  <button (click)="nextPage()" class="px-4 py-2 bg-green-200 text-gray-500  rounded-md hover:bg-green-400">Next</button>
+</div>
+
+</div>
